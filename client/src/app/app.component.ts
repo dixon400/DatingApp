@@ -1,27 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit{
+  http = inject(HttpClient)
   title = 'client';
-  users:any;
-
-  constructor(private http:HttpClient){
-
-  }
+  users: any;
   ngOnInit(): void {
-   this.getUsers(); 
-  }
-
-  getUsers(){
-    this.http.get('https://localhost:5001/api/users').subscribe(response=>{
-      this.users = response;
-    }, error=>{
-      console.log(error);
-    });
+    this.http.get('https://localhost:5001/api/users').subscribe({
+      next: data => this.users = data,
+      error: error => {console.log(error)},
+      complete: () => {console.log({"data": "Fetched"})}
+    })
   }
 }
